@@ -2,7 +2,7 @@
   "name": "ghoulie",
   "private": false,
   "version": "0.0.1",
-  "description": "ghoulies client side interface",
+  "description": "client side interface for ghoulies, a full-stack integration testrunner",
   "keywords": [],
   "dependencies": {
     "event-emitter": "^0.3.4"
@@ -12,7 +12,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/jaxcore/ghoulie"
   },
   "author": "jaxcore",
   "license": "MIT"
