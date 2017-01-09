@@ -7,28 +7,27 @@ function ar(a) {
 }
 
 function Ghoulie() {
-	this.queuing = !this.isClient() || this.isDev() || typeof global==='object';
-	var isServer = typeof process=='object' && typeof process.env==='object' && typeof process.env.NODE_ENV==='string';
+	this.queuing = !this.isClient() || this.isDev() || typeof global === 'object';
+	var isServer = typeof process == 'object' && typeof process.env === 'object' && typeof process.env.NODE_ENV === 'string';
 	if (this.isClient() && this.isDev() && !isServer) {
 		var me = this;
-		window.addEventListener('load', function() {
+		window.addEventListener('load', function () {
 			me.log('ghoulie: init');
 			me.is_dev_client = true;
 			me.init();
 		});
 	}
-	//else alert('no client '+this.isClient()+' '+this.isDev()+' '+isServer);
 	this.ee = new EventEmitter();
 }
 Ghoulie.prototype = {
-	isClient: function() {
-		return typeof global==='object' || (typeof window==='object' && typeof navigator==='object' || typeof location==='object');
+	isClient: function () {
+		return typeof global === 'object' || (typeof window === 'object' && typeof navigator === 'object' || typeof location === 'object');
 	},
-	isProd: function() {
+	isProd: function () {
 		// assume production environment unless window.NODE_ENV is set to something other than test/dev/develop/development
 		return !this.isDev();
 	},
-	isDev: function() {
+	isDev: function () {
 		// development environment if window.NODE_ENV is set to one of test/dev/develop/development
 		if (typeof NODE_ENV === 'string' && (NODE_ENV === 'test' || NODE_ENV === 'dev' || NODE_ENV === 'develop' || NODE_ENV === 'development')) {
 			return true;
@@ -36,13 +35,11 @@ Ghoulie.prototype = {
 	},
 	emit: function () {
 		if (this.is_dev_client) {
-			var args = Array.prototype.slice.apply(arguments);
+			var args = ar(arguments);
 			this.ee.emit.apply(this.ee, args);
-			//console.log('ghoulie: log', arguments);
 		}
 		else if (this.isDev()) {
-			// var args = ar(arguments);
-			var args = Array.prototype.slice.apply(arguments);
+			var args = ar(arguments);
 			if (this.queuing) { //} && this.ghoulies) {
 				this.queue.push(args);
 			}
@@ -63,7 +60,7 @@ Ghoulie.prototype = {
 	},
 	on: function () {
 		if (this.isDev()) {
-			var args = Array.prototype.slice.apply(arguments);
+			var args = ar(arguments);
 			this.ee.on.apply(this.ee, args);
 		}
 		else if (this.isClient() && this.isDev()) {
@@ -73,7 +70,7 @@ Ghoulie.prototype = {
 	log: function () {
 		if (this.is_dev_client) console.log('ghoulie: log', arguments);
 		else if (this.isDev()) {
-			var args = Array.prototype.slice.apply(arguments);
+			var args = ar(arguments);
 			if (this.ghoulies) {
 				if (this.queuing) {
 					this.logQueue.push(args);
