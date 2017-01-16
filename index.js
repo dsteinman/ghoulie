@@ -36,16 +36,20 @@ Ghoulie.prototype = {
 	emit: function () {
 		if (this.is_dev_client) {
 			var args = ar(arguments);
-			this.ee.emit.apply(this.ee, args);
+			args.unshift('ghoulie: emiting');
+			console.log.apply(console, args);
+			this.ee.emit.apply(this.ee, ar(arguments));
 		}
 		else if (this.isDev()) {
 			var args = ar(arguments);
-			if (this.queuing) { //} && this.ghoulies) {
+			if (this.queuing) {
 				this.queue.push(args);
 			}
 			else {
-				console.log('ghoulie: emiting', args);
-				this.ee.emit.apply(this.ee, args);
+				var args = ar(arguments);
+				args.unshift('ghoulie: emiting');
+				console.log.apply(console, args);
+				this.ee.emit.apply(this.ee, ar(arguments));
 			}
 		}
 	},
@@ -68,7 +72,11 @@ Ghoulie.prototype = {
 		}
 	},
 	log: function () {
-		if (this.is_dev_client) console.log('ghoulie: log', arguments);
+		if (this.is_dev_client) {
+			var args = ar(arguments);
+			args.unshift('ghoulie:');
+			console.log.apply(console, args);
+		}
 		else if (this.isDev()) {
 			var args = ar(arguments);
 			if (this.ghoulies) {
@@ -81,18 +89,20 @@ Ghoulie.prototype = {
 				}
 			}
 			else {
-				console.log('ghoulie: log', args);
+				var args = ar(arguments);
+				args.unshift('ghoulie:');
+				console.log.apply(console, args);
 			}
 		}
 	},
 	init: function () {
 		if ((this.ghoulies || this.is_dev_client) && this.queuing) {
 			this.queuing = false;
-			var l;
-			while (l = this.logQueue.shift()) {
-				this.log.apply(this, l);
+			
+			let q;
+			while (q = this.logQueue.shift()) {
+				this.log.apply(this, q);
 			}
-			var q;
 			while (q = this.queue.shift()) {
 				this.emit.apply(this, q);
 			}
@@ -101,10 +111,18 @@ Ghoulie.prototype = {
 	name: 'ghoulie',
 	queue: [],
 	logQueue: [],
-	ghoulies: null
+	ghoulies: null,
+	reducer: function() {
+		return (state = {}, action) => {
+			//this.log('action:', action);
+			this.emit(action.type, action);
+			return state;
+		};
+	}
 };
 
 var ghoulie = new Ghoulie();
+
 if (typeof window === 'object') {
 	window.__ghoulie = ghoulie;
 }
